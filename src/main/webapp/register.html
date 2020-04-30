@@ -89,7 +89,7 @@
 							}else {
 								//注册失败，更换验证码
 								$("#msg").html(data.errorMsg);
-								document.getElementById("img1").src="checkCode?"+new Date().getTime();
+								document.getElementById("checkCode").src="checkCode?"+new Date().getTime();
 							}
 						});
 					}
@@ -185,7 +185,7 @@
     							</td>
     							<td class="td_right check">
     								<input type="text" id="check" name="check" class="check">
-    								<img src="checkCode" height="32px" alt="" onclick="changeCheckCode(this)">
+    								<img id="checkCode" src="checkCode" height="32px" alt="" onclick="changeCheckCode(this)">
 									<script type="text/javascript">
 										//图片点击事件
 										function changeCheckCode(img) {
