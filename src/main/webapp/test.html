@@ -1,20 +1,29 @@
 <!DOCTYPE html>
+<script src="js/getParameter.js"></script>
+<script src="js/jquery-3.3.1.js"></script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <!--导入jquery-->
-    <script src="js/jquery-3.3.1.js"></script>
-    <script>
-        $(function () {
-            $("#login").onclick(function () {
-                alert("点")
-            });
-        });
-
-    </script>
 </head>
+<script>
+    $(function () {
+        //查询用户姓名
+        $.get("user/findOne", {}, function (data) {
+            if (data != null) {
+                var msg = "欢迎回来，" + data.name;
+                $("#span_name").html(msg);
+                document.getElementById("login").style.display = ""
+                document.getElementById("login_out").style.display = "none";
+            } else {
+                document.getElementById("login").style.display = "none";
+                document.getElementById("login_out").style.display = "";
+            }
+        });
+    });
+</script>
 <body>
-<button type="button" id="login">登录</button>
+    <div id="login">login</div>
+    <div id="login_out">login_out</div>
 </body>
 </html>
