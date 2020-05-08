@@ -7,7 +7,78 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/common.css">
     <link rel="stylesheet" type="text/css" href="css/route-detail.css">
+    <script src="js/getParameter.js"></script>
+    <script src="js/jquery-3.3.1.js"></script>
 </head>
+<script>
+    $(function () {
+        var rid = getParameter("rid");
+        $.get("route/findOne",{rid:rid},function (route) {
+            //处理json数据
+            //动态展示相关信息
+            $("#rname").html(route.rname);
+            $("#rname1").html(route.rname);
+            $("#price").html("￥"+route.price);
+            $("#routeIntroduce").html(route.routeIntroduce);
+            $("#sname").html(route.seller.sname);
+            $("#sphone").html(route.seller.consphone);
+            $("#saddress").html(route.seller.address);
+            $("#favoriteCount").html("已收藏"+route.count+"次");
+
+            //图片资源代码
+            var imgs = '<a class="up_img up_img_disable"></a>';
+            //遍历图片资源存放路径数组
+            for(var i = 0;i<route.routeImgList.length;i++){
+                var img;
+                //只显示四张图片
+                if(i>4){
+                    img='<a title="" class="little_img"  style="display:none;" data-bigpic="'+route.routeImgList[i].bigPic+'">\n' +
+                        '<img src="'+route.routeImgList[i].smallPic+'">\n' +
+                        '</a>';
+                }else {
+                    img='<a title="" class="little_img" data-bigpic="'+route.routeImgList[i].bigPic+'">\n' +
+                        '<img src="'+route.routeImgList[i].smallPic+'">\n' +
+                        '</a>';
+                }
+                imgs+=img;
+            }
+            imgs+='<a class="down_img down_img_disable" style="margin-bottom: 0;"></a>';
+            $("#imgdd").html(imgs);
+            goImg();
+        });
+    });
+
+    $(function () {
+        var rid = getParameter("rid");
+        $.get("route/isFavorite",{rid:rid},function (flag) {
+            if (flag){
+                //用户已收藏或已登录
+                $("#favorite").addClass("already");
+                $("#favorite").attr("disabled","disabled");
+                $("#favorite").removeAttr("onclick");
+            }
+
+        });
+
+    });
+
+    function addFavorite(){
+        var rid = getParameter("rid");
+        $.get("user/findOne",{},function (user) {
+            if(user==null){
+                //没有登录，提示登录并调转到登陆页面
+                alert("您还没有登录，请先登录");
+                location.href="login.html";
+            }else {
+                //已登录，发送添加请求
+                $.get("route/addFavorite",{rid:rid},function () {
+                    location.reload();
+                });
+            }
+        });
+    }
+
+</script>
 
 <body>
 <!--引入头部-->
@@ -17,7 +88,7 @@
         <div class="bread_box">
             <a href="/">首页</a>
             <span> &gt;</span>
-            <a href="#">国内游</a><span> &gt;</span>
+            <a href="#" id="rname1">国内游</a><span> &gt;</span>
             <a href="#">全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</a>
         </div>
         <div class="prosum_box">
@@ -25,7 +96,7 @@
                 <dt>
                     <img alt="" class="big_img" src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m49788843d72171643297ccc033d9288ee.jpg">
                 </dt>
-                <dd>
+                <dd id="imgdd">
                     <a class="up_img up_img_disable"></a>
                     <a title="" class="little_img" data-bigpic="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size4/201703/m40920d0669855e745d97f9ad1df966ebb.jpg">
                         <img src="http://www.jinmalvyou.com/Public/uploads/goods_img/img_size2/201703/m20920d0669855e745d97f9ad1df966ebb.jpg">
@@ -58,20 +129,20 @@
                 </dd>
             </dl>
             <div class="prosum_right">
-               <p class="pros_title">【尾单特卖】全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</p>
-                <p class="hot">1-2月出发，网付立享￥1099/2人起！爆款位置有限，抢完即止！</p>
+               <p class="pros_title" id="rname">【尾单特卖】全国-曼谷6-7天自由行 泰国出境旅游 特价往返机票自由行二次确认</p>
+                <p class="hot" id="routeIntroduce">1-2月出发，网付立享￥1099/2人起！爆款位置有限，抢完即止！</p>
                 <div class="pros_other">
-                    <p>经营商家  ：黑马国旅</p>
-                    <p>咨询电话 : 400-618-9090</p>
-                    <p>地址 ： 传智播客黑马程序员</p>  
+                    <p>经营商家  ：<span id="sname"></span></p>
+                    <p>咨询电话 : <span id="sphone"></span></p>
+                    <p>地址 ： <span id="saddress"></span></p>
                 </div>
                 <div class="pros_price">
-                    <p class="price"><strong>¥2699.00</strong><span>起</span></p>
+                    <p class="price"><strong id="price">¥2699.00</strong><span>起</span></p>
                     <p class="collect">
-                        <a class="btn"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
+                        <a class="btn" id="favorite" onclick="addFavorite()"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
 
                         <a  class="btn already" disabled="disabled"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
-                        <span>已收藏100次</span>
+                        <span id="favoriteCount">已收藏100次</span>
                     </p>
                 </div>        
             </div>
